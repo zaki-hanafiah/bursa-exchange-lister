@@ -1,24 +1,8 @@
-# affin-hwang-test
+# Affin Hwang Front-end Developer Interview Questions
 
-## Project setup
-```
-npm install
-```
+**Candidate Name**
+- Zaki Hanafiah
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- Question 1 - [Link](questions/question-1)
+- Question 2 - [Link](questions/question-1)
+- Question 3 - [Link](questions/question-3)
