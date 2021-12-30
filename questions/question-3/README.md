@@ -1,24 +1,18 @@
-# affin-hwang-test
+# Question 3
 
-## Project setup
-```
-npm install
-```
+Based on the requirements below, create a Vue project via vue Single File Components (SFC). Feel free to use the Vue CLI. You are free to use component states and/or vuex to build the web application.
+Requirements
+Given the data below, generate a table to display the records as shown in the example:
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+![Example Table](src/assets/img.png "Table")
 
-### Compiles and minifies for production
-```
-npm run build
-```
+# Answer
 
-### Lints and fixes files
-```
-npm run lint
-```
+**Details**
+- Project was generated using Vue CLI, Vue3 and written in Typescript.
+- Ant Design Vue was chosen as the design framework for this project.
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+**Test Link**
+- https://affin-hwang-zaki.surge.sh
+
+[Back to Main](../../README.md)
