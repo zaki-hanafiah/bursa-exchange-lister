@@ -3,6 +3,7 @@
 **Candidate Name**
 - Zaki Hanafiah
 
-- Question 1 - [Link](questions/question-1)
-- Question 2 - [Link](questions/question-1)
-- Question 3 - [Link](questions/question-3)
+**Questions & Answers**
+- [Question 1](questions/question-1)
+- [Question 2](questions/question-1)
+- [Question 3](questions/question-3)

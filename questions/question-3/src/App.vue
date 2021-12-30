@@ -1,77 +1,83 @@
 <template>
   <a-row>
     <a-col :xs="{ span: 22, offset: 1 }" :md="{ span: 18, offset: 3 }">
+      <a-row style="margin: 1.2rem 0">
+        <a-space direction="horizontal">
+          <a-select
+            v-model:value="state.selected_month"
+            style="width: 400px"
+            placeholder="Filter by month"
+            :options="state.months_list"
+            @change="handleMonthChange"
+          ></a-select>
+          <a-select
+            v-model:value="state.selected_exchange"
+            style="width: 400px"
+            placeholder="Filter by exchange"
+            :options="state.exchange_list"
+            @change="handleExchangeChange"
+          ></a-select>
+        </a-space>
+      </a-row>
       <DataTable :table_columns="table_columns" :table_data="table_data" />
     </a-col>
   </a-row>
 </template>
 
 <script lang="ts">
-import FEED_DATA from "./data/data_pricefeed.json";
+import { compareDesc, format, subMonths } from "date-fns";
+import FEED_DATA from "@/data/data_pricefeed.json";
 import { Options, Vue } from "vue-class-component";
+import { IFeedData, TDropdownItem } from "@/definitions";
+import { CommonStore } from "@/store";
 import DataTable from "@/components/DataTable.vue";
-
-interface IFeedData {
-  code: string;
-  name: string;
-  exchange: string;
-  priceCurrent: number;
-  priceAdded: number;
-  currency: string;
-  dateAdded: string;
-}
 
 const table_columns = [
   {
     title: "NAME",
     dataIndex: "name",
-    className: "align-center",
     key: "name",
+    ellipsis: true,
   },
   {
     title: "EXCHANGE",
     dataIndex: "exchange",
-    className: "align-center",
+    className: "align--center",
     key: "exchange",
     width: 120,
-    ellipsis: true,
   },
   {
     title: "CODE",
     dataIndex: "code",
-    className: "align-center",
+    className: "align--center",
     key: "code",
     width: 120,
-    ellipsis: true,
   },
   {
     title: "DATE ADDED",
     dataIndex: "dateAdded",
-    className: "align-center",
+    className: "align--center",
     key: "dateAdded",
     width: 140,
-    ellipsis: true,
   },
   {
     title: "PRICE ADDED",
     dataIndex: "priceAdded",
-    className: "align-right",
+    className: "align--right",
     key: "pricedAdded",
     width: 160,
-    ellipsis: true,
   },
   {
     title: "CURRENT PRICE",
     dataIndex: "priceCurrent",
-    className: "align-right",
+    className: "align--right",
     key: "priceCurrent",
     width: 160,
-    ellipsis: true,
   },
   {
     title: "CHANGE",
     dataIndex: "priceChange",
-    className: "align-right",
+    className: "align--right",
     key: "priceChange",
     width: 160,
     ellipsis: true,
@@ -83,15 +89,64 @@ const parsed_feed_data = FEED_DATA.map((data: IFeedData, idx: number) => ({
   key: `${idx}`,
 }));
 
+const handleExchangeChange = (value: string) => {
+  sessionStorage.setItem("selected_exchange", value);
+};
+
+const handleMonthChange = (value: string) => {
+  sessionStorage.setItem("selected_month", value);
+};
+
 @Options({
   data() {
     return {
+      handleExchangeChange,
+      handleMonthChange,
+      state: CommonStore.state,
+      setSelectedExchange: CommonStore.setSelectedExchange,
+      setExchangeList: CommonStore.setExchangeList,
+      setSelectedMonth: CommonStore.setSelectedMonth,
+      setMonthsList: CommonStore.setMonthsList,
       table_data: parsed_feed_data as IFeedData[],
       table_columns,
     };
   },
   components: {
     DataTable,
+  },
+  mounted() {
+    const exchange_list: TDropdownItem[] = [];
+    const exchange_data: string[] = [];
+    parsed_feed_data.forEach((feed_data: IFeedData) => {
+      const { exchange } = feed_data;
+      if (!exchange_data.includes(exchange)) {
+        exchange_list.push({
+          label: exchange,
+          value: exchange,
+        });
+        exchange_data.push(exchange);
+      }
+    });
+    this.setExchangeList(exchange_list);
+    const months_list = [...Array(6).keys()]
+      .map((idx: number) => subMonths(new Date(), idx + 1))
+      .sort(compareDesc)
+      .map((month_data: Date) => {
+        const month_label = format(month_data, "MMMM");
+        const month_value = format(month_data, "MMM");
+        return { label: month_label, value: month_value };
+      });
+    this.setMonthsList(months_list);
+    const session_selected_month = sessionStorage.getItem("selected_month");
+    const session_selected_exchange =
+      sessionStorage.getItem("selected_exchange");
+    if (session_selected_month) {
+      this.setSelectedMonth(session_selected_month);
+    }
+    if (session_selected_exchange) {
+      this.setSelectedExchange(session_selected_exchange);
+    }
+    console.log(this.state);
   },
 })
 export default class App extends Vue {}
@@ -107,10 +162,10 @@ export default class App extends Vue {}
   margin-top: 60px;
 }
 .align {
-  &-center {
+  &--center {
     text-align: center !important;
   }
-  &-right {
+  &--right {
     text-align: right !important;
   }
 }
