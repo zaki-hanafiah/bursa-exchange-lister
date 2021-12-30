@@ -1,5 +1,10 @@
 <template>
-  <a-table bordered :columns="table_columns" :data-source="table_data">
+  <a-table
+    bordered
+    :columns="table_columns"
+    :data-source="table_data"
+    :scroll="{ y: 600 }"
+  >
     <template #bodyCell="{ column, record, text }">
       <template v-if="column.dataIndex === 'name'">
         <strong>{{ text }}</strong>

@@ -4,6 +4,8 @@ import { IFeedData, TDropdownItem } from "@/definitions";
 export const CommonStore = {
   state: reactive({
     filtered_list: [] as IFeedData[],
+    filtered_exchange_list: [] as IFeedData[],
+    filtered_month_list: [] as IFeedData[],
     exchange_list: [] as TDropdownItem[],
     months_list: [] as TDropdownItem[],
     selected_exchange: "0" as string,
@@ -28,6 +30,16 @@ export const CommonStore = {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   setMonthsList(months: TDropdownItem[]) {
     this.state.months_list = months;
+  },
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  setFilteredExchangeList(feed_data: IFeedData[]) {
+    this.state.filtered_exchange_list = feed_data;
+  },
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  setFilteredMonthList(feed_data: IFeedData[]) {
+    this.state.filtered_month_list = feed_data;
   },
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

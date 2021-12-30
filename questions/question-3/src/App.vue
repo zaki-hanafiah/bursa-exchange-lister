@@ -1,12 +1,12 @@
 <template>
   <a-row>
     <a-col :xs="{ span: 22, offset: 1 }" :md="{ span: 18, offset: 3 }">
-      <a-row style="margin: 1.2rem 0">
+      <a-row style="margin: 1.2rem 0 0">
         <a-space direction="horizontal" size="middle">
           <a-form-item label="Filter by month">
             <a-select
               v-model:value="state.selected_month"
-              style="width: 400px"
+              style="width: 240px"
               :options="state.months_list"
               @change="handleMonthChange"
             ></a-select>
@@ -14,20 +14,23 @@
           <a-form-item label="Filter by exchange">
             <a-select
               v-model:value="state.selected_exchange"
-              style="width: 400px"
+              style="width: 180px"
               :options="state.exchange_list"
               @change="handleExchangeChange"
             ></a-select>
           </a-form-item>
         </a-space>
       </a-row>
-      <DataTable :table_columns="table_columns" :table_data="table_data" />
+      <DataTable
+        :table_columns="table_columns"
+        :table_data="state.filtered_list"
+      />
     </a-col>
   </a-row>
 </template>
 
 <script lang="ts">
-import { compareDesc, format, getMonth, subMonths } from "date-fns";
+import { compareDesc, format, subMonths } from "date-fns";
 import FEED_DATA from "@/data/data_pricefeed.json";
 import { Options, Vue } from "vue-class-component";
 import { IFeedData, TDropdownItem } from "@/definitions";
@@ -86,46 +89,43 @@ const table_columns = [
   },
 ];
 
-const parsed_feed_data = FEED_DATA.map((data: IFeedData) => ({
+const parsed_feed_data = FEED_DATA.map((data: IFeedData, idx: number) => ({
   ...data,
-  key: data.code,
+  key: `${idx}`,
 }));
 
-const handleExchangeChange = (value: string) => {
-  sessionStorage.setItem("selected_exchange", value);
-  // do filtering here
-  console.log(
-    parsed_feed_data.filter((feed_data: IFeedData) => {
-      const { exchange } = feed_data;
-      return exchange === value || value === "0";
-    })
-  );
-};
-
-const handleMonthChange = (value: string) => {
-  sessionStorage.setItem("selected_month", value);
-  // do filtering here
-  console.log(
-    parsed_feed_data.filter((feed_data: IFeedData) => {
-      const { dateAdded } = feed_data;
+const filterFeedData = (type: string, value: string, list: IFeedData[]) => {
+  return list.filter((feed_data: IFeedData) => {
+    const { dateAdded, exchange } = feed_data;
+    if (type === "month") {
       const month = format(new Date(dateAdded), "MMM");
       return month === value || value === "0";
-    })
+    } else if (type === "exchange") {
+      return exchange === value || value === "0";
+    }
+    return true;
+  });
+};
+
+const compareFilteredData = (list_1: IFeedData[], list_2: IFeedData[]) => {
+  return list_2.map((item, idx: number) =>
+    Object.assign({}, item, list_1[idx])
   );
 };
 
 @Options({
   data() {
     return {
-      handleExchangeChange,
-      handleMonthChange,
+      compareFilteredData,
+      filterFeedData,
       state: CommonStore.state,
       setSelectedExchange: CommonStore.setSelectedExchange,
+      setFilterExchangeList: CommonStore.setFilteredExchangeList,
+      setFilteredMonthList: CommonStore.setFilteredMonthList,
       setFilteredList: CommonStore.setFilteredList,
       setExchangeList: CommonStore.setExchangeList,
       setSelectedMonth: CommonStore.setSelectedMonth,
       setMonthsList: CommonStore.setMonthsList,
-      table_data: parsed_feed_data as IFeedData[],
       table_columns,
     };
   },
@@ -133,6 +133,7 @@ const handleMonthChange = (value: string) => {
     DataTable,
   },
   mounted() {
+    this.setFilteredList(parsed_feed_data);
     const exchange_list: TDropdownItem[] = [];
     const exchange_data: string[] = [];
     parsed_feed_data.forEach((feed_data: IFeedData) => {
@@ -167,22 +168,88 @@ const handleMonthChange = (value: string) => {
       sessionStorage.getItem("selected_exchange");
     if (session_selected_month) {
       this.setSelectedMonth(session_selected_month);
-      // do filtering here
+      const getDataSource = () => {
+        if (
+          session_selected_exchange === "0" &&
+          session_selected_month === "0"
+        ) {
+          return parsed_feed_data;
+        } else if (session_selected_exchange) {
+          return filterFeedData(
+            "exchange",
+            session_selected_exchange,
+            parsed_feed_data
+          );
+        }
+        return parsed_feed_data;
+      };
+      this.setFilteredMonthList(
+        filterFeedData("month", session_selected_month, getDataSource())
+      );
+      this.setFilteredList(this.state.filtered_month_list);
     }
     if (session_selected_exchange) {
       this.setSelectedExchange(session_selected_exchange);
-      console.log(
-        parsed_feed_data.filter((feed_data: IFeedData) => {
-          const { exchange } = feed_data;
-          return (
-            exchange === session_selected_exchange ||
-            session_selected_exchange === "0"
+      const getDataSource = () => {
+        if (
+          session_selected_month === "0" &&
+          session_selected_exchange === "0"
+        ) {
+          return parsed_feed_data;
+        } else if (session_selected_month) {
+          return filterFeedData(
+            "month",
+            session_selected_month,
+            parsed_feed_data
           );
-        })
+        }
+        return parsed_feed_data;
+      };
+      this.setFilterExchangeList(
+        filterFeedData("exchange", session_selected_exchange, getDataSource())
       );
-      // do filtering here
+      this.setFilteredList(this.state.filtered_exchange_list);
     }
-    console.log(this.state);
+  },
+  methods: {
+    handleExchangeChange(value: string) {
+      sessionStorage.setItem("selected_exchange", value);
+      const getDataSource = () => {
+        if (this.state.selected_month === "0" && value === "0") {
+          return parsed_feed_data;
+        } else if (value === "0") {
+          return this.state.filtered_month_list;
+        }
+        return filterFeedData(
+          "month",
+          this.state.selected_month,
+          parsed_feed_data
+        );
+      };
+      this.setFilterExchangeList(
+        filterFeedData("exchange", value, getDataSource())
+      );
+      this.setFilteredList(this.state.filtered_exchange_list);
+    },
+    handleMonthChange(value: string) {
+      sessionStorage.setItem("selected_month", value);
+      const getDataSource = () => {
+        if (this.state.selected_exchange === "0" && value === "0") {
+          return parsed_feed_data;
+        } else if (value === "0") {
+          return this.state.filtered_exchange_list;
+        }
+        return filterFeedData(
+          "exchange",
+          this.state.selected_exchange,
+          parsed_feed_data
+        );
+      };
+      this.setFilteredMonthList(
+        filterFeedData("month", value, getDataSource())
+      );
+      this.setFilteredList(this.state.filtered_month_list);
+    },
   },
 })
 export default class App extends Vue {}
@@ -195,7 +262,7 @@ export default class App extends Vue {}
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  padding-top: 60px;
 }
 .align {
   &--center {
