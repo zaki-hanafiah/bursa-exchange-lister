@@ -2,21 +2,23 @@
   <a-row>
     <a-col :xs="{ span: 22, offset: 1 }" :md="{ span: 18, offset: 3 }">
       <a-row style="margin: 1.2rem 0">
-        <a-space direction="horizontal">
-          <a-select
-            v-model:value="state.selected_month"
-            style="width: 400px"
-            placeholder="Filter by month"
-            :options="state.months_list"
-            @change="handleMonthChange"
-          ></a-select>
-          <a-select
-            v-model:value="state.selected_exchange"
-            style="width: 400px"
-            placeholder="Filter by exchange"
-            :options="state.exchange_list"
-            @change="handleExchangeChange"
-          ></a-select>
+        <a-space direction="horizontal" size="middle">
+          <a-form-item label="Filter by month">
+            <a-select
+              v-model:value="state.selected_month"
+              style="width: 400px"
+              :options="state.months_list"
+              @change="handleMonthChange"
+            ></a-select>
+          </a-form-item>
+          <a-form-item label="Filter by exchange">
+            <a-select
+              v-model:value="state.selected_exchange"
+              style="width: 400px"
+              :options="state.exchange_list"
+              @change="handleExchangeChange"
+            ></a-select>
+          </a-form-item>
         </a-space>
       </a-row>
       <DataTable :table_columns="table_columns" :table_data="table_data" />
@@ -25,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { compareDesc, format, subMonths } from "date-fns";
+import { compareDesc, format, getMonth, subMonths } from "date-fns";
 import FEED_DATA from "@/data/data_pricefeed.json";
 import { Options, Vue } from "vue-class-component";
 import { IFeedData, TDropdownItem } from "@/definitions";
@@ -84,17 +86,32 @@ const table_columns = [
   },
 ];
 
-const parsed_feed_data = FEED_DATA.map((data: IFeedData, idx: number) => ({
+const parsed_feed_data = FEED_DATA.map((data: IFeedData) => ({
   ...data,
-  key: `${idx}`,
+  key: data.code,
 }));
 
 const handleExchangeChange = (value: string) => {
   sessionStorage.setItem("selected_exchange", value);
+  // do filtering here
+  console.log(
+    parsed_feed_data.filter((feed_data: IFeedData) => {
+      const { exchange } = feed_data;
+      return exchange === value || value === "0";
+    })
+  );
 };
 
 const handleMonthChange = (value: string) => {
   sessionStorage.setItem("selected_month", value);
+  // do filtering here
+  console.log(
+    parsed_feed_data.filter((feed_data: IFeedData) => {
+      const { dateAdded } = feed_data;
+      const month = format(new Date(dateAdded), "MMM");
+      return month === value || value === "0";
+    })
+  );
 };
 
 @Options({
@@ -104,6 +121,7 @@ const handleMonthChange = (value: string) => {
       handleMonthChange,
       state: CommonStore.state,
       setSelectedExchange: CommonStore.setSelectedExchange,
+      setFilteredList: CommonStore.setFilteredList,
       setExchangeList: CommonStore.setExchangeList,
       setSelectedMonth: CommonStore.setSelectedMonth,
       setMonthsList: CommonStore.setMonthsList,
@@ -127,24 +145,42 @@ const handleMonthChange = (value: string) => {
         exchange_data.push(exchange);
       }
     });
-    this.setExchangeList(exchange_list);
+    this.setExchangeList([{ label: "Show all", value: "0" }, ...exchange_list]);
+    const most_recent_available_date = parsed_feed_data
+      .map((feed_data: IFeedData) => {
+        const { dateAdded } = feed_data;
+        return new Date(dateAdded);
+      })
+      .sort(compareDesc)[0];
+
     const months_list = [...Array(6).keys()]
-      .map((idx: number) => subMonths(new Date(), idx + 1))
+      .map((idx: number) => subMonths(most_recent_available_date, idx))
       .sort(compareDesc)
       .map((month_data: Date) => {
         const month_label = format(month_data, "MMMM");
         const month_value = format(month_data, "MMM");
         return { label: month_label, value: month_value };
       });
-    this.setMonthsList(months_list);
+    this.setMonthsList([{ label: "Show all", value: "0" }, ...months_list]);
     const session_selected_month = sessionStorage.getItem("selected_month");
     const session_selected_exchange =
       sessionStorage.getItem("selected_exchange");
     if (session_selected_month) {
       this.setSelectedMonth(session_selected_month);
+      // do filtering here
     }
     if (session_selected_exchange) {
       this.setSelectedExchange(session_selected_exchange);
+      console.log(
+        parsed_feed_data.filter((feed_data: IFeedData) => {
+          const { exchange } = feed_data;
+          return (
+            exchange === session_selected_exchange ||
+            session_selected_exchange === "0"
+          );
+        })
+      );
+      // do filtering here
     }
     console.log(this.state);
   },

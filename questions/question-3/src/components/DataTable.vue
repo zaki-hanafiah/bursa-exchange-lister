@@ -45,13 +45,12 @@ const getPercentageDiff = (priceCurrent: number, priceAdded: number) => {
     table_data: Array,
     table_columns: Array,
   },
-  methods: {
-    getChangeDiff: (priceCurrent: number, priceAdded: number) =>
-      getChangeDiff(priceCurrent, priceAdded),
-    getPercentageDiff: (priceCurrent: number, priceAdded: number) =>
-      getPercentageDiff(priceCurrent, priceAdded),
-    getStatusColor: (priceCurrent: number, priceAdded: number) =>
-      getStatusColor(priceCurrent, priceAdded),
+  data() {
+    return {
+      getStatusColor,
+      getChangeDiff,
+      getPercentageDiff,
+    };
   },
 })
 export default class DataTable extends Vue {}
