@@ -10,7 +10,11 @@
         <strong>{{ text }}</strong>
       </template>
       <template v-if="column.dataIndex === 'priceChange'">
-        <span :class="[getStatusColor(record.priceCurrent, record.priceAdded)]"
+        <span
+          :class="[
+            getPrefixClass(record.priceCurrent, record.priceAdded),
+            getStatusColorClass(record.priceCurrent, record.priceAdded),
+          ]"
           >{{ getChangeDiff(record.priceCurrent, record.priceAdded) }} ({{
             getPercentageDiff(record.priceCurrent, record.priceAdded)
           }})</span
@@ -29,7 +33,15 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 
-const getStatusColor = (priceCurrent: number, priceAdded: number) => {
+const getPrefixClass = (priceCurrent: number, priceAdded: number) => {
+  const change_diff = Number(getChangeDiff(priceCurrent, priceAdded));
+  if (change_diff === 0) {
+    return null;
+  }
+  return change_diff > 0 ? "prefix--positive" : null;
+};
+
+const getStatusColorClass = (priceCurrent: number, priceAdded: number) => {
   const change_diff = Number(getChangeDiff(priceCurrent, priceAdded));
   if (change_diff === 0) {
     return "status--normal";
@@ -52,7 +64,8 @@ const getPercentageDiff = (priceCurrent: number, priceAdded: number) => {
   },
   data() {
     return {
-      getStatusColor,
+      getPrefixClass,
+      getStatusColorClass,
       getChangeDiff,
       getPercentageDiff,
     };
@@ -63,6 +76,12 @@ export default class DataTable extends Vue {}
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.prefix {
+  &--positive::before {
+    content: "+";
+    padding-right: 2px;
+  }
+}
 .status {
   &--normal {
     color: dimgrey;
