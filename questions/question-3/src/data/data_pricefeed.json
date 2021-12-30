@@ -1,0 +1,121 @@
+[
+  {
+    "code": "GAMUDA",
+    "name": "Gamuda Berhad",
+    "exchange": "BURSA",
+    "priceCurrent": 3.17,
+    "priceAdded": 2.15,
+    "currency": "MYR",
+    "dateAdded": "2021-03-25"
+  },
+  {
+    "code": "AASIA",
+    "name": "Astral Asia Berhad",
+    "exchange": "BURSA",
+    "priceCurrent": 0.14,
+    "priceAdded": 0.14,
+    "currency": "MYR",
+    "dateAdded": "2021-04-05"
+  },
+  {
+    "code": "MYEG",
+    "name": "My E.G. Services Berhad",
+    "exchange": "BURSA",
+    "priceCurrent": 1.93,
+    "priceAdded": 1.88,
+    "currency": "MYR",
+    "dateAdded": "2021-02-18"
+  },
+  {
+    "code": "TOPGLOV",
+    "name": "Top Glove Corporation Berhad",
+    "exchange": "BURSA",
+    "priceCurrent": 5.18,
+    "priceAdded": 5.10,
+    "currency": "MYR",
+    "dateAdded": "2021-05-16"
+  },
+  {
+    "code": "CRM",
+    "name": "Salesforce.com Inc.",
+    "exchange": "NYSE",
+    "priceCurrent": 238.10,
+    "priceAdded": 215.35,
+    "currency": "USD",
+    "dateAdded": "2021-05-16"
+  },
+  {
+    "code": "PYPL",
+    "name": "PayPal Holdings Inc.",
+    "exchange": "NYSE",
+    "priceCurrent": 260.02,
+    "priceAdded": 276.45,
+    "currency": "USD",
+    "dateAdded": "2021-05-12"
+  },
+  {
+    "code": "TWLO",
+    "name": "Twilio Inc.",
+    "exchange": "NYSE",
+    "priceCurrent": 336.00,
+    "priceAdded": 230.65,
+    "currency": "USD",
+    "dateAdded": "2021-04-01"
+  },
+  {
+    "code": "BA",
+    "name": "Boeing Co",
+    "exchange": "NYSE",
+    "priceCurrent": 247.02,
+    "priceAdded": 190.66,
+    "currency": "USD",
+    "dateAdded": "2021-04-18"
+  },
+
+  {
+    "code": "FB",
+    "name": "Facebook, Inc.",
+    "exchange": "NASDAQ",
+    "priceCurrent": 328.73,
+    "priceAdded": 300.65,
+    "currency": "USD",
+    "dateAdded": "2021-03-20"
+  },
+
+  {
+    "code": "AAPL",
+    "name": "Apple Inc.",
+    "exchange": "NASDAQ",
+    "priceCurrent": 124.61,
+    "priceAdded": 123.33,
+    "currency": "USD",
+    "dateAdded": "2021-05-04"
+  },
+  {
+    "code": "AAPL",
+    "name": "Apple Inc.",
+    "exchange": "NASDAQ",
+    "priceCurrent": 124.61,
+    "priceAdded": 123.33,
+    "currency": "USD",
+    "dateAdded": "2021-05-04"
+  },
+  {
+    "code": "MSFT",
+    "name": "Microsoft Corporation",
+    "exchange": "NASDAQ",
+    "priceCurrent": 249.68,
+    "priceAdded": 252.15,
+    "currency": "USD",
+    "dateAdded": "2021-02-01"
+  },
+  {
+    "code": "AMZN",
+    "name": "Amazon.com, Inc",
+    "exchange": "NASDAQ",
+    "priceCurrent": 3223.07,
+    "priceAdded": 2968.36,
+    "currency": "USD",
+    "dateAdded": "2021-03-25"
+  }
+]
