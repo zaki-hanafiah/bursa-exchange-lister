@@ -13,6 +13,6 @@ Given the data below, generate a table to display the records as shown in the ex
 - Ant Design Vue was chosen as the design framework for this project.
 
 **Test Link**
-- https://affin-hwang-test-zaki-hanafiah.sh
+- https://affin-hwang-test-zaki-hanafiah.surge.sh
 
 [Back to Main](../../README.md)
