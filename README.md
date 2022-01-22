@@ -1,4 +1,4 @@
-# Affin Hwang Front-end Developer Interview Questions
+# Typical Bank Front-end Developer Interview Questions
 
 **Candidate Name**
 - Zaki Hanafiah
