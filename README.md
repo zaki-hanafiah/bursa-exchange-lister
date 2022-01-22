@@ -1,4 +1,4 @@
-# Typical Bank Front-end Developer Interview Questions
+# Typical Front-end Developer Interview Questions from Banking Institutions (Vue stack)
 
 **Candidate Name**
 - Zaki Hanafiah
