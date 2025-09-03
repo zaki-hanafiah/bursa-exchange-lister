@@ -45,5 +45,10 @@
       "vue-cli-service lint",
       "git add"
     ]
+  },
+  "overrides": {
+    "cross-spawn": "^7.0.6",
+    "postcss": "^8.4.31",
+    "webpack-dev-server": "^5.2.1"
   }
 }
